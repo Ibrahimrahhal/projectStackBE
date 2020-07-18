@@ -1,0 +1,6 @@
+/node_modules
+/.vscode
+/.aws
+config.js
+claudia.json
+util.js
