@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const User = require('../schemas/user');
-const { encryptData, decryptData, base64ToString } = require('../util');
+const path = require('path');
+const { encryptData, decryptData, base64ToString } = require(path.join(__dirname,'../util'));
 const { validateUpdateReqBelongToSameUser } = require('../protectedRouteMiddleware');
 
 router.patch('/' , async (req,res)=>{

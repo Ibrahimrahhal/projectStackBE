@@ -10,24 +10,23 @@ router.get('/', async (req, res)=>{
     let projects = await user.getProjects();
     let regularProjects = [];
     for(let project of projects){
-        await project.loadMembers();
         regularProjects.push(project.toRegularObject());
     }
-    for(let project of  regularProjects){
-        let hldMembers = [];
-        for( let member of project.members){
-            hldMembers.push((await User.getUser(member)).toRegularObject());
-        }
-        project.members = hldMembers;
-    }
-
     res.json({ data : encryptData(regularProjects)});
 });
 
 
 router.get('/:ID', async (req, res) => {    
-let project = await Project.getProject(req.param("ID"));
- res.json({data: encryptData(project.toRegularObject())});
+    let project = await Project.getProject(req.param("ID"));
+    let withMembers = req.query["members"];
+    if(withMembers)
+        await project.loadMembers()
+
+    project.members = project.members  || [];
+    for(let i = 0; i < project.members.length; i++)
+        project.members[i] = await User.getUser(project.members[i]);
+
+    res.json({data: encryptData(project.toRegularObject())});
 });
 
 router.post('/', async (req, res)=>{
@@ -60,6 +59,16 @@ router.put('/:ID', async (req, res)=>{
 });
 
 
+router.get('/:ID/members', async (req, res)=>{
+    let project = new Project({ID: req.params['ID']});
+    await project.loadMembers();
+    let hldMembers = [];
+    for(memberEmail of project.members)
+        hldMembers.push((await User.getUser(memberEmail)).toRegularObject());
+    res.json(hldMembers);
+})
+
+
 router.post('/:ID/member/:email', async (req,res) => {
 let project = await Project.getProject(req.param("ID"));
 let userEmail = encryptData(req.param("email"));
@@ -81,7 +90,6 @@ let result = await prmosieBasedPutItem({
 });
 res.json(result);
 });
-
 
 
 

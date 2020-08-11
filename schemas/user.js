@@ -5,7 +5,9 @@
 //     lastName:Joi.string(),
 //     type:Joi.custom()
 // });
-const { prmosieBasedScan, prmosieBasedGetItem, prmosieBasedUpdateItem } = require("../util");
+
+const path = require('path');
+const { prmosieBasedScan, prmosieBasedGetItem, prmosieBasedUpdateItem } = require(path.join(__dirname,'../util'));
 const { tables } = require("../config");
 const Project = require("./Project");
 const Config = require('../config');
@@ -24,23 +26,7 @@ class User {
     department;
     yearOfGrad;
     headline;
-    static totalAttr  = {
-        email:'S',
-        firstName:'S',
-        lastName:'S',
-        userType:'N',
-        profileImage:'S',
-        skills:'S',
-        resume:'S',
-        interests:'S',
-        university:'N',
-        department:'N',
-        yearOfGrad:'N',
-        headline:'S',
-        projects:'S',
-        summery:'S'
-    };
-    static toStringAtrr = ['skills', 'interests'];
+
     static privateAttribute = ['userCompletedSignup'];
     constructor(user){
         for (const atrr in this)
