@@ -1,0 +1,13 @@
+{
+    "properties":{
+        "projectName": { "type" : "keyword" },
+        "projectDesc": { "type" : "text" },
+        "isPublic": { "type" : "boolean"},
+        "maxNumberOfMembers": { "type" : "integer"},
+        "creatorEmail": { "type" : "keyword" },
+        "profEmail": { "type" : "keyword" },
+        "timeCreated": { "type" : "long" },
+        "projectType": { "type" : "integer"},
+        "slogan":  { "type" : "keyword" }
+    }
+}

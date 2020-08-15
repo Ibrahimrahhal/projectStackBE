@@ -1,0 +1,7 @@
+{
+    "properties":{
+        "projectId" : { "type" : "keyword" },
+        "userID" : { "type" : "keyword" },
+        "isAdmin" : { "type" : "boolean"}
+    }
+}

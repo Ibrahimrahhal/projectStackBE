@@ -34,16 +34,6 @@ class User {
                 this[atrr] = user[atrr];
     }
 
-    toDynamoDbObject(){
-        let obj = {};
-        Object.keys(User.totalAttr).forEach((key)=>{
-            if(typeof this[key] != typeof undefined)
-                obj[key] = {
-                    [User.totalAttr[key]]: User.toStringAtrr.includes(key)?JSON.stringify(this[key]):this[key]
-                }
-        });
-        return obj;
-    }
     static async getUser(email){
         let result =  await prmosieBasedGetItem({
                  Key:{
@@ -54,6 +44,7 @@ class User {
              });
          return User.fromDynamoDB(result.Item);
      }
+
     static fromDynamoDB(Item){
         let user = {}
         Object.keys(Item).forEach((key)=>{
@@ -75,15 +66,7 @@ class User {
         return users;
     }
 
-    async patch(){
-        return await prmosieBasedUpdateItem({
-            Key:{
-                "email": {"S":this.email},
-            },
-            TableName: Config.tables.users,
-            ...this.generatePutExprestions()
-        });
-    }
+    async patch
 
     toRegularObject(){
         let obj = {};

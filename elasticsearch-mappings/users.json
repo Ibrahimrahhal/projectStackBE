@@ -1,0 +1,12 @@
+{
+    "properties": {
+        "email": { "type" : "keyword" },
+        "firstName": { "type" : "keyword" },
+        "lastName": { "type" : "keyword" },
+        "userType": { "type" : "integer" },
+        "profileImage": { "type" : "keyword" },
+        "resume": { "type" : "keyword" },
+        "summery": { "type" : "text" },
+        "headline": { "type" : "keyword" }
+    }
+}
