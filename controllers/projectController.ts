@@ -37,6 +37,6 @@ export default class ProjectController extends DynamodbController<Project> imple
     }
 
     Search(SearchObject:any):Promise<Project>{
-        
+        return new Promise(X=>X);
     }
 }

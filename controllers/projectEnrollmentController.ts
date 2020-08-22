@@ -1,13 +1,13 @@
 import User from "../schemas/user/user";
 import Project from "../schemas/project/project";
-import ProjectUserRelations from "../schemas/relations/ProjectEnrollment";
+import ProjectEnrollmentRelations from "../schemas/relations/ProjectEnrollment";
 import ManyToMany from "./dynamodb/relations/many2many";
 import Config from '../config';
-import ProjectEnrollmentFactory from "../factories/projectUserRelationFactory";
+import ProjectEnrollmentFactory from "../factories/projectEnrollmentsFactory";
 import ProjectController from "./projectController";
 import UserController from "./UserController";
 
-export default class ProjectEnrollmentController extends ManyToMany<ProjectUserRelations, Project, User>{
+export default class ProjectEnrollmentController extends ManyToMany<ProjectEnrollmentRelations, Project, User>{
     static instance:ProjectEnrollmentController;
     protected FirstEntityController:ProjectController;
     protected SecondEntityController:UserController;
@@ -15,14 +15,27 @@ export default class ProjectEnrollmentController extends ManyToMany<ProjectUserR
         ID:"S",
         userID:"S",
         projectID:"S",
-        timestamp:"N"
+        timestamp:"N",
+        isAdmin:"BOOL"
      };
-     private ID:string;
-     private userID:string;
-     private projectId:string;
-     private timestamp:number;
     toStringAtrr:Array<string> = []
     primaryKey = "ID";
     dynamodbTable = Config.tables.projectUserTable;
     Factory = new ProjectEnrollmentFactory();
+
+
+
+    private constructor(){
+        super();
+        this.FirstEntityController = ProjectController.getInstance();
+        this.SecondEntityController = UserController.getInstance();
+    }
+
+
+    static getInstance():ProjectEnrollmentController{
+        if(ProjectEnrollmentController.instance)
+            return ProjectEnrollmentController.instance;
+            ProjectEnrollmentController.instance = new ProjectEnrollmentController();
+        return ProjectEnrollmentController.getInstance();
+    }
 }

@@ -10,9 +10,28 @@ export default abstract class JoinRequest implements Serializable{
     rejectionMessage:string;
     acceptionMessage:string;
     timestamp:number;
+    public type:number;
 
-    constructor(){
-        this.timestamp = Date.now();
+    constructor(
+        ID:string, 
+        userID:string, 
+        projectID:string, 
+        message:string = "", 
+        accepted:boolean = false, 
+        rejected:boolean = false, 
+        rejectionMessage:string = "",
+        acceptionMessage:string = "",
+        timestamp:number = Date.now()){
+        
+        this.ID = ID;
+        this.userID = userID;
+        this.projectID = projectID;
+        this.message = message;
+        this.accepted = accepted;
+        this.rejected = rejected;
+        this.rejectionMessage = rejectionMessage;
+        this.acceptionMessage = acceptionMessage;
+        this.timestamp = timestamp;
     }
     
     isOnHold():boolean{
@@ -27,7 +46,7 @@ export default abstract class JoinRequest implements Serializable{
         return this.rejected === false;
     }
 
-    
+
     serializeAsJSON(){
         let obj:any = {};
         Object.keys(this).forEach((key)=>{

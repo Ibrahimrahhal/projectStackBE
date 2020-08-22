@@ -8,8 +8,8 @@ export default class ProjectUserRelations implements Serializable{
     private userID:string;
     private projectId:string;
     private timestamp:number;
-
-    constructor(projectId:string, userID:string, ID?:string, timestamp?:number){
+    private isAdmin:boolean;
+    constructor(projectId:string, userID:string, isAdmin:boolean = false, ID?:string, timestamp?:number){
         this.projectId = projectId;
         this.userID = userID;
         this.ID = ID ||  hashFunction(projectId+userID);

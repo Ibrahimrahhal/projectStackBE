@@ -41,7 +41,7 @@ export default class UserController extends DynamodbController<User> implements 
     }
 
     Search(SearchObject:any):Promise<User>{
-        
+        return new Promise(X=>X);
     }
 
 }
