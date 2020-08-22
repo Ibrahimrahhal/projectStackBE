@@ -4,20 +4,16 @@ import Notification from './notification';
 export default class UserJoinRequestToRelatedProjectNotification extends Notification{
     Type:number = 1;
     projectID:string;
-    senderUserID:string;
-    receiverUserID:string;
-    JoinRequest:UserJoinRequest;
+    RequestID:string;
     constructor(
         ID:string, 
         projectID:string, 
-        senderProjectID:string, 
         userID:string, 
-        JoinRequest:UserJoinRequest){
-        super(ID);
+        JoinRequestID:string,
+        read:boolean = false){
+        super(ID, userID, read);
         this.projectID = projectID;
-        this.senderUserID = senderProjectID;
-        this.receiverUserID = userID;
-        this.JoinRequest = JoinRequest;
+        this.RequestID = JoinRequestID;
     }
 }
 

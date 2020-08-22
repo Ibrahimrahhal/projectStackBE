@@ -17,5 +17,6 @@ export default {
         return `https://s3.amazonaws.com/${name}/`
     },
     disableAuth:false,
-    disableEncryption:false
+    disableEncryption:false,
+    elasicsearch:""
 };

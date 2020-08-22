@@ -2,6 +2,7 @@
     "properties":{
         "projectId" : { "type" : "keyword" },
         "userID" : { "type" : "keyword" },
-        "isAdmin" : { "type" : "boolean"}
+        "isAdmin" : { "type" : "boolean"},
+        "timestamp": {"type" : "long"}
     }
 }

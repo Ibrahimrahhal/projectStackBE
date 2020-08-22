@@ -1,6 +1,6 @@
 {
     "properties":{
-        "projectName": { "type" : "keyword" },
+        "projectName": { "type" : "text" },
         "projectDesc": { "type" : "text" },
         "isPublic": { "type" : "boolean"},
         "maxNumberOfMembers": { "type" : "integer"},
@@ -8,6 +8,6 @@
         "profEmail": { "type" : "keyword" },
         "timeCreated": { "type" : "long" },
         "projectType": { "type" : "integer"},
-        "slogan":  { "type" : "keyword" }
+        "slogan":  { "type" : "text" }
     }
 }

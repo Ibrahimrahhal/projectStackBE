@@ -1,8 +1,8 @@
 {
     "properties": {
         "email": { "type" : "keyword" },
-        "firstName": { "type" : "keyword" },
-        "lastName": { "type" : "keyword" },
+        "firstName": { "type" : "text" },
+        "lastName": { "type" : "text" },
         "userType": { "type" : "integer" },
         "profileImage": { "type" : "keyword" },
         "resume": { "type" : "keyword" },

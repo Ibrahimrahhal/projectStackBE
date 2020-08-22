@@ -1,10 +1,11 @@
 
-import Config from '../../config';
-import DynamodbController from './dynamodbController';
-import UsersFactory from '../../factories/usersFactory';
-import User from '../../schemas/user/user';
+import Config from '../config';
+import DynamodbController from './dynamodb/dynamodbController';
+import UsersFactory from '../factories/usersFactory';
+import User from '../schemas/user/user';
+import { Searchable } from '../implementables/searching';
 
-class UserController extends DynamodbController<User>{
+export default class UserController extends DynamodbController<User> implements Searchable<User>{
     static instance:UserController;
 
     totalAttr  = {
@@ -37,6 +38,10 @@ class UserController extends DynamodbController<User>{
             return UserController.instance;
         UserController.instance = new UserController();
         return UserController.getInstance();
+    }
+
+    Search(SearchObject:any):Promise<User>{
+        
     }
 
 }

@@ -1,6 +1,7 @@
 import User from "../user/user";
 import { hashFunction } from '../../util';
-export default class Project{
+import Serializable from "../../implementables/serializations";
+export default class Project implements Serializable{
     ID:string;
     projectName:string;
     projectDesc:String;
@@ -21,7 +22,7 @@ export default class Project{
             this.ID = hashFunction(Date.now().toString()).substring(0,8);
     }
 
-    serilizeAsJSON(){
+    serializeAsJSON(){
         let obj:any = {};
         Object.keys(this).forEach((key)=>{
             if(typeof (this as any)[key] != typeof undefined)

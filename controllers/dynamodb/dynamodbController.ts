@@ -32,7 +32,7 @@ export default abstract class DynamodbController<T>{
         return (value || '').toString();
     }
 
-    fromDynamodbObject(Item:any):T{
+    fromDynamodbObject(Item:any):T{    
         let obj:any = {}
         Object.keys(Item).forEach((key)=>{
             Object.keys(Item[key]).forEach((type)=>{

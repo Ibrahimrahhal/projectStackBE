@@ -1,4 +1,6 @@
-export default abstract class JoinRequest{
+import Serializable from "../../implementables/serializations";
+
+export default abstract class JoinRequest implements Serializable{
     ID:string;
     userID:string;
     projectID:string;
@@ -23,6 +25,16 @@ export default abstract class JoinRequest{
 
     isRejected():boolean{
         return this.rejected === false;
+    }
+
+    
+    serializeAsJSON(){
+        let obj:any = {};
+        Object.keys(this).forEach((key)=>{
+            if(typeof (this as any)[key] != typeof undefined)
+                obj[key] = (this as any)[key];
+        });
+        return obj; 
     }
 
     abstract markAsAccepted: markWithMithMultipleUsers | markWithMithSingleUsers;

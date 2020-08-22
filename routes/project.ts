@@ -9,7 +9,7 @@ import {
     prmosieBasedPutItem,  
     prmosieBasedUpdateItem 
 } from '../util';
-import ProjectController from '../controllers/dynamodb/projectController';
+import ProjectController from '../controllers/projectController';
 import Project from '../schemas/project/project';
 
 const router = express.Router();

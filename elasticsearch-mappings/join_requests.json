@@ -1,0 +1,14 @@
+{
+    "properties":{
+        "userID": { "type" : "keyword" },
+        "projectID": { "type" : "keyword" },
+        "message": { "type" : "text" },
+        "accepted": { "type" : "boolean" },
+        "rejected": { "type" : "boolean" },
+        "rejectionMessage": { "type" : "text" },
+        "acceptionMessage": {"type": "text"},
+        "timestamp": {"type": "long"},
+        "type": { "type": "integer" },
+        "actionDoneBy": { "type" : "keyword" }
+    }
+}

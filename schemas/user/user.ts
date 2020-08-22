@@ -1,4 +1,6 @@
-export default class User {
+import Serializable from "../../implementables/serializations";
+
+export default class User implements Serializable {
     email:string;
     firstName:string;
     lastName:string;

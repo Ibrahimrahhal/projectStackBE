@@ -1,9 +1,10 @@
-import Config from '../../config';
-import DynamodbController from './dynamodbController';
-import ProjectsFactory from '../../factories/projectsFactory';
-import Project from '../../schemas/project/project';
+import Config from '../config';
+import DynamodbController from './dynamodb/dynamodbController';
+import ProjectsFactory from '../factories/projectsFactory';
+import Project from '../schemas/project/project';
+import { Searchable } from '../implementables/searching';
 
-export default class ProjectController extends DynamodbController<Project>{
+export default class ProjectController extends DynamodbController<Project> implements Searchable<Project>{
     static instance:ProjectController;
 
     totalAttr  = {
@@ -35,5 +36,7 @@ export default class ProjectController extends DynamodbController<Project>{
         return ProjectController.getInstance();
     }
 
-
+    Search(SearchObject:any):Promise<Project>{
+        
+    }
 }
