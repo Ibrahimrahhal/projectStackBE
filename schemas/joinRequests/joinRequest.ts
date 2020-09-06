@@ -56,6 +56,14 @@ export default abstract class JoinRequest implements Serializable{
         return obj; 
     }
 
+    isUserJoinRequest():boolean{
+        return this.type === JoinRequestTypeEnum.UserJoinRequest
+    }
+
+    isProjectJoinRequest():boolean{
+        return this.type === JoinRequestTypeEnum.ProjectJoinRequest;
+    }
+
     abstract markAsAccepted: markWithMithMultipleUsers | markWithMithSingleUsers;
 
     abstract markAsRejected: markWithMithMultipleUsers | markWithMithSingleUsers;
@@ -64,3 +72,8 @@ export default abstract class JoinRequest implements Serializable{
 
 type markWithMithMultipleUsers = (UserIDThatRejected:string, message:string)=>void;
 type markWithMithSingleUsers = (message:string)=>void;
+
+export const JoinRequestTypeEnum = {
+    ProjectJoinRequest:1,
+    UserJoinRequest:2
+}

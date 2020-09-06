@@ -14,6 +14,7 @@ export default class ProjectUserRelations implements Serializable{
         this.userID = userID;
         this.ID = ID ||  hashFunction(projectId+userID);
         this.timestamp = timestamp || Date.now();
+        this.isAdmin = isAdmin;
     }
 
 
@@ -24,6 +25,14 @@ export default class ProjectUserRelations implements Serializable{
                 obj[key] = (this as any)[key];
         });
         return obj; 
+    }
+
+    getUserID():string{
+        return this.userID;
+    }
+
+    getProjectID():string{
+        return this.projectId;
     }
     
 }

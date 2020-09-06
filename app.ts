@@ -1,7 +1,7 @@
 // const express = require('express');
 // const cookieParser = require('cookie-parser');
 // const logger = require('morgan');
-const routeHandlers = require('./routes/index');
+import routeHandlers from './routes/index'
 // const securityMiddleware = require('./protectedRouteMiddleware');
 // const cors = require('cors')
 
@@ -10,6 +10,7 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import securityMiddleware from './protectedRouteMiddleware';
 import cors from 'cors';
+
 const app = express();
 
 app.use(cors())

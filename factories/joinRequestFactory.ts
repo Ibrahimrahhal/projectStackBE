@@ -1,5 +1,5 @@
 import ProjectJoinRequest from "../schemas/joinRequests/projectJoinRequest";
-import JoinRequest from "../schemas/joinRequests/joinRequest";
+import JoinRequest, { JoinRequestTypeEnum } from "../schemas/joinRequests/joinRequest";
 import Factory from "./factory";
 import UserJoinRequest from "../schemas/joinRequests/userJoinRequest";
 
@@ -72,7 +72,3 @@ export default class JoinRequestsFactory extends Factory<JoinRequest>{
     
 }
 
-const JoinRequestTypeEnum = {
-    ProjectJoinRequest:1,
-    UserJoinRequest:2
-}

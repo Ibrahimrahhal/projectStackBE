@@ -14,7 +14,6 @@ export default class Project implements Serializable{
     members:Array<User>;
     slogan:string;
     tags:Array<number>;
-
     constructor(project:any){
         for (const atrr in project)
             (this as any)[atrr] = project[atrr];
@@ -28,6 +27,11 @@ export default class Project implements Serializable{
             if(typeof (this as any)[key] != typeof undefined)
                 obj[key] = (this as any)[key];
         });
+        obj.members = (this.members || []).map(member=>member.serializeAsJSON());
         return obj; 
+    }
+
+    setMembers(users:User[]){
+        this.members = users;
     }
 }

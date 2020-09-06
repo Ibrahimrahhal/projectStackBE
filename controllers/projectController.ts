@@ -3,8 +3,10 @@ import DynamodbController from './dynamodb/dynamodbController';
 import ProjectsFactory from '../factories/projectsFactory';
 import Project from '../schemas/project/project';
 import { Searchable } from '../implementables/searching';
+import Elasticsearch from './elasticsearch/elasticSearchController';
+import Indexable from "./elasticsearch/elasticsearch_indexable";
 
-export default class ProjectController extends DynamodbController<Project> implements Searchable<Project>{
+export default class ProjectController extends DynamodbController<Project> implements Searchable<Project>, Indexable{
     static instance:ProjectController;
 
     totalAttr  = {
@@ -24,7 +26,7 @@ export default class ProjectController extends DynamodbController<Project> imple
     primaryKey = "ID";
     dynamodbTable = Config.tables.projects;
     Factory = new ProjectsFactory();
-
+    indexName = Config.elasticsearch.indices.projects;
     private constructor(){
         super();
     }
@@ -39,4 +41,26 @@ export default class ProjectController extends DynamodbController<Project> imple
     Search(SearchObject:any):Promise<Project>{
         return new Promise(X=>X);
     }
+
+    getItem(projectID:string | Array<string>):Promise<Project | Project[]>{
+        return super.getItem(projectID);
+    }
+
+    async patchItem(Item:Project):Promise<void>{
+        await super.patchItem(Item);
+        await Elasticsearch.PatchItem(this.indexName, Item.serializeAsJSON());
+        return;
+    }
+
+    async insertItem(Item:Project):Promise<void>{
+        await super.insertItem(Item);
+        await Elasticsearch.insertItem(this.indexName, Item.serializeAsJSON());
+        return;
+    }
+    
+
+
+
+
+
 }

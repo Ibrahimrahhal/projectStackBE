@@ -10,5 +10,5 @@ class JoinRequestAnsweredNotification extends notification_1.default {
         this.Type = 3;
     }
 }
-module.exports = JoinRequestAnsweredNotification;
+exports.default = JoinRequestAnsweredNotification;
 //# sourceMappingURL=joinRequestAnswerdNotiffications.js.map

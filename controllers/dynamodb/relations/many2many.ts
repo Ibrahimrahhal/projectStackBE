@@ -10,12 +10,4 @@ export default abstract class ManyToMany<RelationClass, FirstEntity, SecondEntit
     }
 
 
-    public async getAllRelationByFirstEntity(FirstEntityKey:string){
-
-    }
-
-    public async getAllRelationBySecondEntity(SecondEntityKey:string){
-
-    }
-
 }

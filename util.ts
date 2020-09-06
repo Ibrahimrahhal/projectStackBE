@@ -5,10 +5,9 @@ import CryptoJS from 'crypto-js';
 
 const s3 = new AWS.S3();
 const dynamodb = new AWS.DynamoDB({region:"us-east-1"});
-const sha256 = require('sha256')
+import sha256 from 'sha256';
 
-
-export function prmosieBasedGetItem(param:any){
+export function promiseBasedGetItem(param:any){
     return new Promise((resolve, reject)=>{
         dynamodb.getItem(param, (err, data)=>{
             if(err)
@@ -17,6 +16,17 @@ export function prmosieBasedGetItem(param:any){
             resolve(data);
         })
     });
+}
+
+export function promiseBasedGetItems(params:any){
+    return new Promise((resolve, reject)=>[
+        dynamodb.batchGetItem(params,(err, data)=>{
+            if(err)
+                reject(err)
+            else
+                resolve(data); 
+        })
+    ])
 }
 
 export function promiseBasedQueryItem(params:any){
@@ -130,4 +140,5 @@ export function base64ToString(base64String:string){
 export function GenerateRandomID():string{
         return sha256(Math.random().toString());
 }
+
 

@@ -20,6 +20,9 @@ export default class User implements Serializable {
             (this as any)[atrr] = user[atrr];
     }
 
+    isVerfied(){
+        return  typeof this.userType != typeof undefined;
+    }
 
     serializeAsJSON(){
         let obj:any = {};

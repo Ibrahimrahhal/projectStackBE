@@ -5,9 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const joinRequest_1 = __importDefault(require("./joinRequest"));
 class UserJoinRequest extends joinRequest_1.default {
-    constructor() {
-        super(...arguments);
-        this.type = 2;
+    constructor(ID, userID, projectID, message = "", accepted = false, rejected = false, rejectionMessage = "", acceptionMessage = "", timestamp = Date.now(), actionDoneBy) {
+        super(ID, userID, projectID, message, accepted, rejected, rejectionMessage, acceptionMessage, timestamp);
         this.markAsAccepted = (UserIDThatAccepted, message) => {
             this.accepted = true;
             this.actionDoneBy = UserIDThatAccepted;
@@ -18,6 +17,7 @@ class UserJoinRequest extends joinRequest_1.default {
             this.actionDoneBy = UserIDThatRejected;
             this.rejectionMessage = message;
         };
+        this.actionDoneBy = actionDoneBy;
     }
 }
 exports.default = UserJoinRequest;

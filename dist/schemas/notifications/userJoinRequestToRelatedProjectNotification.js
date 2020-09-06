@@ -5,13 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const notification_1 = __importDefault(require("./notification"));
 class UserJoinRequestToRelatedProjectNotification extends notification_1.default {
-    constructor(ID, projectID, senderProjectID, userID, JoinRequest) {
-        super(ID);
+    constructor(ID, projectID, userID, JoinRequestID, read = false) {
+        super(ID, userID, read);
         this.Type = 1;
         this.projectID = projectID;
-        this.senderUserID = senderProjectID;
-        this.receiverUserID = userID;
-        this.JoinRequest = JoinRequest;
+        this.RequestID = JoinRequestID;
     }
 }
 exports.default = UserJoinRequestToRelatedProjectNotification;

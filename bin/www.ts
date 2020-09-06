@@ -1,24 +1,16 @@
 
 
-var app = require('../app');
-var http = require('http');
-
+import App from '../app';
+import http from 'http';
 
 var port = normalizePort(process.env.PORT || 3000);
-
-
-
-var server = http.createServer(app);
-
-
+var server = http.createServer(App);
 
 server.listen(port);
-
 console.log(port)
 
-function normalizePort(val) {
+function normalizePort(val:any) {
   var port = parseInt(val, 10);
-
   if (isNaN(port)) {
     // named pipe
     return val;

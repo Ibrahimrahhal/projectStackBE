@@ -7,7 +7,6 @@ const joinRequest_1 = __importDefault(require("./joinRequest"));
 class ProjectJoinRequest extends joinRequest_1.default {
     constructor() {
         super(...arguments);
-        this.type = 1;
         this.markAsAccepted = (message) => {
             this.accepted = true;
             this.acceptionMessage = message;

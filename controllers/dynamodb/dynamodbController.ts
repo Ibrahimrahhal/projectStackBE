@@ -1,4 +1,9 @@
-import { prmosieBasedGetItem, prmosieBasedScan, prmosieBasedUpdateItem } from "../../util";
+import { 
+    promiseBasedGetItem, 
+    prmosieBasedScan, 
+    prmosieBasedUpdateItem, 
+    prmosieBasedPutItem,
+    promiseBasedGetItems } from "../../util";
 import Factory from "../../factories/factory";
 
 
@@ -13,7 +18,7 @@ export default abstract class DynamodbController<T>{
 
 
 
-    toDynamodbObject(item:T):any{
+    protected toDynamodbObject(item:T):any{
         let obj:any = {};
         Object.keys(this.totalAttr).forEach((key)=>{
             if(typeof (item as any)[key] != typeof undefined)
@@ -24,7 +29,7 @@ export default abstract class DynamodbController<T>{
         return obj;
     };
 
-    convertKeyValueForDynamoDB(key:string, value:any):any{
+    protected convertKeyValueForDynamoDB(key:string, value:any):any{
         if(this.toStringAtrr.includes(key))
             return JSON.stringify(value);
         if(typeof value == 'boolean')
@@ -32,7 +37,7 @@ export default abstract class DynamodbController<T>{
         return (value || '').toString();
     }
 
-    fromDynamodbObject(Item:any):T{    
+    protected fromDynamodbObject(Item:any):T{    
         let obj:any = {}
         Object.keys(Item).forEach((key)=>{
             Object.keys(Item[key]).forEach((type)=>{
@@ -43,19 +48,37 @@ export default abstract class DynamodbController<T>{
         return this.Factory.createItem(obj);
     };
     
-    async getItem(primaryKey:string):Promise<T>{
-        let result:any =  await prmosieBasedGetItem({
-                 Key:{
-                     [this.primaryKey]:
-                     { "S": primaryKey}
-                 },
-                 TableName: this.dynamodbTable
-             });
-         return this.fromDynamodbObject(result.Item);
+    protected async getItem(primaryKey:string | Array<string>):Promise<T | Array<T>>{
+    let result:any;
+    let items:T | Array<T>;
+    let isArray:boolean = primaryKey instanceof Array ;
+    primaryKey = (isArray && primaryKey.length == 1) ? primaryKey[0] : primaryKey
+    if(primaryKey instanceof Array){
+        result = await promiseBasedGetItems({
+            RequestItems:{
+                [this.dynamodbTable]: {
+                    Keys: primaryKey.map((key)=>{ return {[this.primaryKey]:{'S':key}}}),
+                }}})
+        items = result.Responses.ProjectStackAllProjects.map((item:any)=>{
+            return this.fromDynamodbObject(item);
+        });
+    }else{
+        result =  await promiseBasedGetItem({
+            Key:{
+                [this.primaryKey]:
+                { "S": primaryKey}
+            },
+            TableName: this.dynamodbTable
+        });
+        items = isArray?[this.fromDynamodbObject(result.Item)]:this.fromDynamodbObject(result.Item);
+    }
+
+    return items;
+         
      };
 
 
-    async patchItem(Item:T):Promise<any>{
+    protected async patchItem(Item:T):Promise<any>{
         return await prmosieBasedUpdateItem({
             Key:{
                 [this.primaryKey]:
@@ -67,7 +90,7 @@ export default abstract class DynamodbController<T>{
     };
 
 
-    async getAllItems():Promise<T[]>{
+    public async getAllItems():Promise<T[]>{
         let results:any = await prmosieBasedScan({
             TableName: this.dynamodbTable
         });
@@ -77,8 +100,16 @@ export default abstract class DynamodbController<T>{
         return items;
     };
 
+    protected async insertItem(Item:T):Promise<any>{
+        let results  = await prmosieBasedPutItem({
+            Item: this.toDynamodbObject(Item),
+            TableName: this.dynamodbTable
+        });
+        return results;
+    }
 
-    generatePutExprestions(item:T):any{
+
+    protected generatePutExprestions(item:T):any{
         let UpdateExpression = 'set ', ExpressionAttributeValues:any = {};
         Object.keys(this.totalAttr).forEach((key)=>{
             if(key == "email")

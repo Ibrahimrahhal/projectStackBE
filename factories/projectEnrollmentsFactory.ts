@@ -4,12 +4,16 @@ import Factory from "./factory";
 export default class ProjectEnrollmentFactory extends Factory<ProjectEnrollment>{
 
 
-    createItem(json:any):ProjectEnrollment{
+    public createItem(json:any):ProjectEnrollment{
         return this.FromJSON(json);
     }
 
+    public createItemParams(userID:string, projectId:string, isAdmin:boolean = false):ProjectEnrollment{
+        return this.FromJSON({userID, projectId, isAdmin});
+    }
+
     private FromJSON({ID, userID, projectId, isAdmin, timestamp}:any):ProjectEnrollment{
-        return new ProjectEnrollment(userID, projectId, isAdmin, ID, timestamp);
+        return new ProjectEnrollment( projectId, userID, isAdmin, ID, timestamp);
     }
 
     

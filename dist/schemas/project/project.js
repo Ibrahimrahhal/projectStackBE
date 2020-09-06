@@ -8,7 +8,7 @@ class Project {
         if (!this.ID)
             this.ID = util_1.hashFunction(Date.now().toString()).substring(0, 8);
     }
-    serilizeAsJSON() {
+    serializeAsJSON() {
         let obj = {};
         Object.keys(this).forEach((key) => {
             if (typeof this[key] != typeof undefined)
