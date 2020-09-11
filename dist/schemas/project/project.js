@@ -14,7 +14,11 @@ class Project {
             if (typeof this[key] != typeof undefined)
                 obj[key] = this[key];
         });
+        obj.members = (this.members || []).map(member => member.serializeAsJSON());
         return obj;
+    }
+    setMembers(users) {
+        this.members = users;
     }
 }
 exports.default = Project;

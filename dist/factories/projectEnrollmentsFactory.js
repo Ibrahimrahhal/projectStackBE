@@ -9,8 +9,11 @@ class ProjectEnrollmentFactory extends factory_1.default {
     createItem(json) {
         return this.FromJSON(json);
     }
+    createItemParams(userID, projectId, isAdmin = false) {
+        return this.FromJSON({ userID, projectId, isAdmin });
+    }
     FromJSON({ ID, userID, projectId, isAdmin, timestamp }) {
-        return new ProjectEnrollment_1.default(userID, projectId, isAdmin, ID, timestamp);
+        return new ProjectEnrollment_1.default(projectId, userID, isAdmin, ID, timestamp);
     }
 }
 exports.default = ProjectEnrollmentFactory;

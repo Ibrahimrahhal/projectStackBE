@@ -1,22 +1,20 @@
 import UserJoinRequest from '../joinRequests/userJoinRequest';
+import notifcationsEnums from './notifcationsEnums';
 import Notification from './notification';
 
 export default class UserJoinRequestToRelatedProjectNotification extends Notification{
-    Type:number = 1;
+    type:number = notifcationsEnums.UserJoinRequestToRelatedProjectNotification;
     projectID:string;
-    RequestID:string;
+    requestID:string;
     constructor(
         ID:string, 
         projectID:string, 
         userID:string, 
         JoinRequestID:string,
-        read:boolean = false){
-        super(ID, userID, read);
+        read:boolean = false,
+        timestamp?:number){
+        super(ID, userID, read, timestamp);
         this.projectID = projectID;
-        this.RequestID = JoinRequestID;
+        this.requestID = JoinRequestID;
     }
 }
-
-
-
-module.exports = UserJoinRequestToRelatedProjectNotification;

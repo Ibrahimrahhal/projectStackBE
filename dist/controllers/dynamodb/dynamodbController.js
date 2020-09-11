@@ -40,13 +40,32 @@ class DynamodbController {
     ;
     getItem(primaryKey) {
         return __awaiter(this, void 0, void 0, function* () {
-            let result = yield util_1.prmosieBasedGetItem({
-                Key: {
-                    [this.primaryKey]: { "S": primaryKey }
-                },
-                TableName: this.dynamodbTable
-            });
-            return this.fromDynamodbObject(result.Item);
+            let result;
+            let items;
+            let isArray = primaryKey instanceof Array;
+            primaryKey = (isArray && primaryKey.length == 1) ? primaryKey[0] : primaryKey;
+            if (primaryKey instanceof Array) {
+                result = yield util_1.promiseBasedGetItems({
+                    RequestItems: {
+                        [this.dynamodbTable]: {
+                            Keys: primaryKey.map((key) => { return { [this.primaryKey]: { 'S': key } }; }),
+                        }
+                    }
+                });
+                items = result.Responses.ProjectStackAllProjects.map((item) => {
+                    return this.fromDynamodbObject(item);
+                });
+            }
+            else {
+                result = yield util_1.promiseBasedGetItem({
+                    Key: {
+                        [this.primaryKey]: { "S": primaryKey }
+                    },
+                    TableName: this.dynamodbTable
+                });
+                items = isArray ? [this.fromDynamodbObject(result.Item)] : this.fromDynamodbObject(result.Item);
+            }
+            return items;
         });
     }
     ;
@@ -70,6 +89,15 @@ class DynamodbController {
         });
     }
     ;
+    insertItem(Item) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let results = yield util_1.prmosieBasedPutItem({
+                Item: this.toDynamodbObject(Item),
+                TableName: this.dynamodbTable
+            });
+            return results;
+        });
+    }
     generatePutExprestions(item) {
         let UpdateExpression = 'set ', ExpressionAttributeValues = {};
         Object.keys(this.totalAttr).forEach((key) => {

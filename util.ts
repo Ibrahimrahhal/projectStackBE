@@ -142,3 +142,11 @@ export function GenerateRandomID():string{
 }
 
 
+export async function asyncMap(array:Array<any>, callBack:any){
+    array = array || [];
+    let arrayToReturn = [];
+    for(let i = 0; i < array.length; i++)
+        arrayToReturn.push(await callBack(array[i]));
+    return arrayToReturn;
+}
+

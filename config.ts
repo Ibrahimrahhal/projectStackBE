@@ -5,7 +5,7 @@ export default {
         projectUserTable: "ProjectStackUserProjectRel",
         projectInvitations: "ProjectStackInvitations",
         projectJoinRequest: "ProjectStackRequests",
-        usersNotificationsTable: "projectStackUsersNotifications"
+        notificationsTable: "projectStackUsersNotifications"
     },
     elasticsearch:{
         endpoint:"https://search-teamslounge-k2eyqwt5ivv2oyonhl42eru7oq.us-east-1.es.amazonaws.com/",
@@ -13,7 +13,8 @@ export default {
             users:'users',
             projects:'projects',
             projectsEnrollments:'projects_enrollments',
-            joinRequests:'join_requests'
+            joinRequests:'join_requests',
+            notification:'notifications'
         },
         searchPageSize:10
     },

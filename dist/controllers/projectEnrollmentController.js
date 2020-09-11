@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -34,11 +42,54 @@ class ProjectEnrollmentController extends many2many_1.default {
         return ProjectEnrollmentController.getInstance();
     }
     getProjectsOfUsers(userID) {
-        let results = elasticSearchController_1.default.search(this.indexName, {
-            filter: {
-                userID
-            }
-        }, undefined);
+        return __awaiter(this, void 0, void 0, function* () {
+            let projectEnrollmentsSearch = yield elasticSearchController_1.default.search(this.indexName, {
+                filter: [{
+                        type: 'match',
+                        feild: 'userID',
+                        value: userID
+                    }]
+            }, undefined);
+            if (projectEnrollmentsSearch.statusCode !== 200)
+                return [];
+            let response = projectEnrollmentsSearch.body;
+            let projectIDs = response.hits.hits.map(x => {
+                return this.Factory.createItem(x._source);
+            }).map(projectEnroll => {
+                return projectEnroll.getProjectID();
+            });
+            return (yield this.FirstEntityController.getItem(projectIDs));
+        });
+    }
+    getMembersOfProject(projectId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let projectEnrollmentsSearch = yield elasticSearchController_1.default.search(this.indexName, {
+                filter: [{
+                        type: 'match',
+                        feild: 'projectId',
+                        value: projectId
+                    }]
+            }, undefined);
+            if (projectEnrollmentsSearch.statusCode !== 200)
+                return [];
+            let response = projectEnrollmentsSearch.body;
+            let userIDs = response.hits.hits.map(x => {
+                return this.Factory.createItem(x._source);
+            }).map(projectEnroll => {
+                return projectEnroll.getUserID();
+            });
+            if (userIDs.length == 0)
+                return [];
+            return (yield this.SecondEntityController.getItem(userIDs));
+        });
+    }
+    addMemberToProject(enrollemnt) {
+        const _super = name => super[name];
+        return __awaiter(this, void 0, void 0, function* () {
+            yield _super("insertItem").call(this, enrollemnt);
+            yield elasticSearchController_1.default.insertItem(this.indexName, enrollemnt.serializeAsJSON());
+            return;
+        });
     }
 }
 exports.default = ProjectEnrollmentController;

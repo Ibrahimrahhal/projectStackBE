@@ -5,6 +5,9 @@ class User {
         for (const atrr in user)
             this[atrr] = user[atrr];
     }
+    isVerfied() {
+        return typeof this.userType != typeof undefined;
+    }
     serializeAsJSON() {
         let obj = {};
         Object.keys(this).forEach((key) => {

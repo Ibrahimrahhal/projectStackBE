@@ -1,7 +1,8 @@
 import express, { Response, Request } from 'express';
 import { 
     encryptData, 
-    decryptData,
+    decryptData, 
+    asyncMap
 } from '../util';
 import ProjectController from '../controllers/projectController';
 import ProjectEnrollmentController from '../controllers/projectEnrollmentController';
@@ -16,6 +17,9 @@ const ProjectsFactoryInstance = new ProjectsFactory();
 
 router.get('/', async (req:Request, res:Response)=>{
     let projects = await ProjectEnrollmentController.getInstance().getProjectsOfUsers((req as any).user.email);
+    await asyncMap(projects, async (project:Project)=>{
+        project.setMembers(await ProjectEnrollmentController.getInstance().getMembersOfProject(project.ID));
+    });
     let results = projects.map(p=>p.serializeAsJSON());
     res.json({data: encryptData(results)});
 });

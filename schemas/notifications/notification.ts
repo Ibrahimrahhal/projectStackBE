@@ -5,11 +5,17 @@ import { GenerateRandomID } from '../../util';
 export default abstract class Notification implements Serializable{
     ID:string;
     read:boolean;
-    UserID:string;
+    userID:string;
     timestamp:number;
-    constructor(ID:string, UserID:string, read:boolean = false){
+    abstract type:number;
+    constructor(
+        ID:string, 
+        UserID:string, 
+        read:boolean = false, 
+        timestamp:number = Date.now()){
         this.read = read;
-        this.UserID = UserID;
+        this.userID = UserID;
+        this.timestamp = timestamp;
         ID = ID || GenerateRandomID();
     }
 

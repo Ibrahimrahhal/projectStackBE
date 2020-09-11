@@ -1,3 +1,5 @@
+import  JoinRequestTypeEnum  from './joinRequestsTypes';
+import { hashFunction } from "../../util";
 import Serializable from "../../implementables/serializations";
 
 export default abstract class JoinRequest implements Serializable{
@@ -10,7 +12,7 @@ export default abstract class JoinRequest implements Serializable{
     rejectionMessage:string;
     acceptionMessage:string;
     timestamp:number;
-    public type:number;
+    public abstract type:number;
 
     constructor(
         ID:string, 
@@ -23,7 +25,7 @@ export default abstract class JoinRequest implements Serializable{
         acceptionMessage:string = "",
         timestamp:number = Date.now()){
         
-        this.ID = ID;
+        this.ID = ID || hashFunction(userID + projectID);
         this.userID = userID;
         this.projectID = projectID;
         this.message = message;
@@ -70,10 +72,6 @@ export default abstract class JoinRequest implements Serializable{
 }
 
 
-type markWithMithMultipleUsers = (UserIDThatRejected:string, message:string)=>void;
-type markWithMithSingleUsers = (message:string)=>void;
+export type markWithMithMultipleUsers = (UserIDThatRejected:string, message:string)=>void;
+export type markWithMithSingleUsers = (message:string)=>void;
 
-export const JoinRequestTypeEnum = {
-    ProjectJoinRequest:1,
-    UserJoinRequest:2
-}

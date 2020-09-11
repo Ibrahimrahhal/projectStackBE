@@ -11,14 +11,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const dynamodbController_1 = __importDefault(require("../dynamodbController"));
-class ManyToMany extends dynamodbController_1.default {
-    AddRelation(Item) {
-        const _super = name => super[name];
-        return __awaiter(this, void 0, void 0, function* () {
-            _super("patchItem").call(this, Item);
-        });
-    }
-}
-exports.default = ManyToMany;
-//# sourceMappingURL=many2many.js.map
+const express_1 = __importDefault(require("express"));
+const projectController_1 = __importDefault(require("../controllers/projectController"));
+const util_1 = require("../util");
+const router = express_1.default.Router();
+router.get('/', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    let projects = yield projectController_1.default.getInstance().getAllItems();
+    let regularObjects = projects.map((project) => {
+        return project.serializeAsJSON();
+    });
+    res.json({ data: util_1.encryptData(regularObjects) });
+}));
+exports.default = router;
+//# sourceMappingURL=projects.js.map

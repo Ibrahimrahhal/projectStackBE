@@ -7,6 +7,8 @@ import RequestController from '../controllers/joinRequestsController';
 import JoinRequest from '../schemas/joinRequests/joinRequest';
 import ProjectUserRelations from '../schemas/relations/ProjectEnrollment';
 import ProjectEnrollmentController from '../controllers/projectEnrollmentController';
+import ProjectJoinRequest from '../schemas/joinRequests/projectJoinRequest';
+import UserJoinRequest from '../schemas/joinRequests/userJoinRequest';
 
 const router:Router = express.Router();
 
@@ -47,12 +49,13 @@ router.post('/invitation/:invitationID/accept', async(req, res)=>{
     let enrollmentFactory = new EnrollemntFactory();
     let data = JSON.parse(encryptData(req.body)).data;
     let enrollemnt:ProjectUserRelations;
-    invitaion.markAsAccepted(userEmail, data.message);
-    if(invitaion.isProjectJoinRequest())
+    if(invitaion instanceof ProjectJoinRequest){
+        (invitaion as ProjectJoinRequest).markAsAccepted(data.message);
         enrollemnt = enrollmentFactory.createItemParams(userEmail, invitaion.projectID);
-    else
+    }else{
+        (invitaion as UserJoinRequest).markAsAccepted((req as any).user.email as string, data.message as string);
         enrollemnt = enrollmentFactory.createItemParams(invitaion.userID, invitaion.projectID);
-
+    }
     await RequestController.getInstance().patchItem(invitaion);
     await ProjectEnrollmentController.getInstance().addMemberToProject(enrollemnt);
     res.json({data:encryptData("success")});
@@ -67,7 +70,10 @@ router.post('/invitaion/:invitationID/reject', async (req, res)=>{
         let { invitationID } = req.params;
         let invitaion:JoinRequest = await RequestController.getInstance().getItem( invitationID ) as JoinRequest;
         let data = JSON.parse(encryptData(req.body)).data;
-        invitaion.markAsRejected((req as any).user.email, data.message);
+        if(invitaion instanceof ProjectJoinRequest)
+            (invitaion as ProjectJoinRequest).markAsRejected(data.message);
+        else
+            (invitaion as UserJoinRequest).markAsRejected((req as any).user.email as string, data.message as string);
         await RequestController.getInstance().patchItem(invitaion);
         res.json({data:encryptData("success")});
         }catch(e){

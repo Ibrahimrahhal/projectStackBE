@@ -7,6 +7,7 @@ class ProjectUserRelations {
         this.userID = userID;
         this.ID = ID || util_1.hashFunction(projectId + userID);
         this.timestamp = timestamp || Date.now();
+        this.isAdmin = isAdmin;
     }
     serializeAsJSON() {
         let obj = {};
@@ -15,6 +16,12 @@ class ProjectUserRelations {
                 obj[key] = this[key];
         });
         return obj;
+    }
+    getUserID() {
+        return this.userID;
+    }
+    getProjectID() {
+        return this.projectId;
     }
 }
 exports.default = ProjectUserRelations;

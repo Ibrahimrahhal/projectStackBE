@@ -1,7 +1,9 @@
-import JoinRequest from './joinRequest';
+import JoinRequest, { markWithMithMultipleUsers } from './joinRequest';
+import joinRequestsTypes from './joinRequestsTypes';
 
 export default class UserJoinRequest extends JoinRequest {
     actionDoneBy:string;
+    type:number = joinRequestsTypes.UserJoinRequest;
     
 
     constructor(
@@ -27,13 +29,13 @@ export default class UserJoinRequest extends JoinRequest {
         this.actionDoneBy = actionDoneBy;
         
     }
-    markAsAccepted = (UserIDThatAccepted:string, message:string)=>{
+    markAsAccepted:markWithMithMultipleUsers = (UserIDThatAccepted:string, message:string)=>{
         this.accepted = true;
         this.actionDoneBy = UserIDThatAccepted
         this.acceptionMessage = message;
     }
 
-    markAsRejected = (UserIDThatRejected:string, message:string)=>{
+    markAsRejected:markWithMithMultipleUsers = (UserIDThatRejected:string, message:string)=>{
         this.rejected = true;
         this.actionDoneBy = UserIDThatRejected
         this.rejectionMessage = message 

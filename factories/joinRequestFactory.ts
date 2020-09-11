@@ -1,5 +1,6 @@
+import JoinRequestTypeEnum  from '../schemas/joinRequests/joinRequestsTypes';
 import ProjectJoinRequest from "../schemas/joinRequests/projectJoinRequest";
-import JoinRequest, { JoinRequestTypeEnum } from "../schemas/joinRequests/joinRequest";
+import JoinRequest from "../schemas/joinRequests/joinRequest";
 import Factory from "./factory";
 import UserJoinRequest from "../schemas/joinRequests/userJoinRequest";
 
@@ -37,8 +38,6 @@ export default class JoinRequestsFactory extends Factory<JoinRequest>{
             rejectionMessage,
             acceptionMessage,
             timestamp);
-        
-        joinReq.type =  JoinRequestTypeEnum.ProjectJoinRequest;
         return joinReq;
     }
 
@@ -65,8 +64,6 @@ export default class JoinRequestsFactory extends Factory<JoinRequest>{
             acceptionMessage,
             timestamp,
             actionDoneBy);
-        
-        joinReq.type =  JoinRequestTypeEnum.UserJoinRequest;
         return joinReq;
     }
     

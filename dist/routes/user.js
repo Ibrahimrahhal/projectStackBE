@@ -22,12 +22,13 @@ router.patch('/', (req, res) => __awaiter(this, void 0, void 0, function* () {
         res.json({});
     }
     catch (e) {
+        console.log(e.toString());
         res.sendStatus(500);
     }
 }));
 router.get('/', (req, res) => __awaiter(this, void 0, void 0, function* () {
     try {
-        let user = yield UserController_1.default.getInstance().getByPrimaryKey(req.user.email);
+        let user = yield UserController_1.default.getInstance().getItem(req.user.email);
         res.json({ data: util_1.encryptData(user.serializeAsJSON()) });
     }
     catch (e) {
@@ -37,7 +38,7 @@ router.get('/', (req, res) => __awaiter(this, void 0, void 0, function* () {
 router.get('/:ID', (req, res) => __awaiter(this, void 0, void 0, function* () {
     let email = util_1.base64ToString(req.params['ID']);
     try {
-        let user = yield UserController_1.default.getInstance().getByPrimaryKey(email);
+        let user = yield UserController_1.default.getInstance().getItem(email);
         res.json({ data: util_1.encryptData(user.serializeAsJSON()) });
     }
     catch (e) {

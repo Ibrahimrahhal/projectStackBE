@@ -53,12 +53,13 @@ class UserController extends dynamodbController_1.default {
         return __awaiter(this, void 0, void 0, function* () {
             let user = this.Factory.createItem(object);
             yield this.patchItem(object);
-            yield elasticSearchController_1.default.PatchItem(this.indexName, user.serializeAsJSON());
+            yield elasticSearchController_1.default.PatchItem(this.indexName, user.serializeAsJSON(), user.serializeAsJSON().email);
         });
     }
-    getByPrimaryKey(primaryKey) {
+    getItem(primaryKey) {
+        const _super = name => super[name];
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.getItem(primaryKey);
+            return yield _super("getItem").call(this, primaryKey);
         });
     }
 }

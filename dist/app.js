@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // const express = require('express');
 // const cookieParser = require('cookie-parser');
 // const logger = require('morgan');
-const routeHandlers = require('./routes/index');
+const index_1 = __importDefault(require("./routes/index"));
 // const securityMiddleware = require('./protectedRouteMiddleware');
 // const cors = require('cors')
 const express_1 = __importDefault(require("express"));
@@ -21,6 +21,6 @@ app.use(express_1.default.json({ limit: '10mb' }));
 app.use(express_1.default.urlencoded({ extended: false, limit: '10mb' }));
 app.use(cookie_parser_1.default());
 app.use(protectedRouteMiddleware_1.default);
-app.use('/', routeHandlers);
+app.use('/', index_1.default);
 exports.default = app;
 //# sourceMappingURL=app.js.map

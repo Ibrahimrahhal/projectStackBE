@@ -29,6 +29,16 @@ class JoinRequest {
         });
         return obj;
     }
+    isUserJoinRequest() {
+        return this.type === exports.JoinRequestTypeEnum.UserJoinRequest;
+    }
+    isProjectJoinRequest() {
+        return this.type === exports.JoinRequestTypeEnum.ProjectJoinRequest;
+    }
 }
 exports.default = JoinRequest;
+exports.JoinRequestTypeEnum = {
+    ProjectJoinRequest: 1,
+    UserJoinRequest: 2
+};
 //# sourceMappingURL=joinRequest.js.map

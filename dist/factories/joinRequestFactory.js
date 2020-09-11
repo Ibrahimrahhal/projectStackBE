@@ -4,32 +4,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const projectJoinRequest_1 = __importDefault(require("../schemas/joinRequests/projectJoinRequest"));
+const joinRequest_1 = require("../schemas/joinRequests/joinRequest");
 const factory_1 = __importDefault(require("./factory"));
 const userJoinRequest_1 = __importDefault(require("../schemas/joinRequests/userJoinRequest"));
 class JoinRequestsFactory extends factory_1.default {
     createItem(json) {
         const { type } = json;
         switch (type) {
-            case JoinRequestTypeEnum.ProjectJoinRequest:
+            case joinRequest_1.JoinRequestTypeEnum.ProjectJoinRequest:
                 return this.CreateProjectJoinRequest(json);
-            case JoinRequestTypeEnum.UserJoinRequest:
+            case joinRequest_1.JoinRequestTypeEnum.UserJoinRequest:
                 return this.CreateUserJoinRequest(json);
         }
     }
     CreateProjectJoinRequest({ ID, userID, projectID, message, accepted, rejected, rejectionMessage, acceptionMessage, timestamp }) {
         let joinReq = new projectJoinRequest_1.default(ID, userID, projectID, message, accepted, rejected, rejectionMessage, acceptionMessage, timestamp);
-        joinReq.type = JoinRequestTypeEnum.ProjectJoinRequest;
+        joinReq.type = joinRequest_1.JoinRequestTypeEnum.ProjectJoinRequest;
         return joinReq;
     }
     CreateUserJoinRequest({ ID, userID, projectID, message, accepted, rejected, rejectionMessage, acceptionMessage, timestamp, actionDoneBy }) {
         let joinReq = new userJoinRequest_1.default(ID, userID, projectID, message, accepted, rejected, rejectionMessage, acceptionMessage, timestamp, actionDoneBy);
-        joinReq.type = JoinRequestTypeEnum.UserJoinRequest;
+        joinReq.type = joinRequest_1.JoinRequestTypeEnum.UserJoinRequest;
         return joinReq;
     }
 }
 exports.default = JoinRequestsFactory;
-const JoinRequestTypeEnum = {
-    ProjectJoinRequest: 1,
-    UserJoinRequest: 2
-};
 //# sourceMappingURL=joinRequestFactory.js.map
