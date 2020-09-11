@@ -24,6 +24,17 @@ export default class NotificationsFactory extends Factory<Notification>{
     }
 
 
+    createProjectJoinRequestNotification(projectID:string, userID:string, requestID:string):Notification{
+        return new ProjectJoinRequestNotification(undefined, projectID, userID, requestID);
+    }
+
+
+    createUserJoinRequestNotification(projectID:string, userIDs:Array<string>, requestID:string):Array<Notification>{
+        return userIDs.map(uid=>new UserJoinRequestToRelatedProjectNotification(undefined, projectID, uid, requestID));
+
+    }
+
+
 
 
 }

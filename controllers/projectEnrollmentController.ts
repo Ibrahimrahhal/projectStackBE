@@ -66,6 +66,17 @@ export default class ProjectEnrollmentController extends ManyToMany<ProjectEnrol
     }
 
     public async getMembersOfProject(projectId:string):Promise<User[]>{
+        return  (await this.SecondEntityController.getItem(await this.getMemberIDSOfProject(projectId))) as  User[];
+    }
+
+    public async addMemberToProject( enrollemnt:ProjectUserRelations ):Promise<void>{
+        await super.insertItem(enrollemnt);
+        await Elasticsearch.insertItem(this.indexName, enrollemnt.serializeAsJSON());
+        return;
+    }
+
+
+    public async getMemberIDSOfProject(projectId:string):Promise<string[]>{
         let projectEnrollmentsSearch = await Elasticsearch.search(this.indexName, {
             filter:[{
                 type:'match',
@@ -83,14 +94,8 @@ export default class ProjectEnrollmentController extends ManyToMany<ProjectEnrol
         }).map(projectEnroll=>{
             return projectEnroll.getUserID()
         });
-        if(userIDs.length == 0)
-            return [];
-        return  (await this.SecondEntityController.getItem(userIDs)) as  User[];
-    }
-
-    public async addMemberToProject( enrollemnt:ProjectUserRelations ):Promise<void>{
-        await super.insertItem(enrollemnt);
-        await Elasticsearch.insertItem(this.indexName, enrollemnt.serializeAsJSON());
-        return;
+        
+        return userIDs;
     }
 }
+

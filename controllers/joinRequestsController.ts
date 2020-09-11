@@ -40,7 +40,7 @@ export default class JoinRequestController extends DynamodbController<JoinReques
         return JoinRequestController.getInstance();
     }
 
-    async createItem(request:JoinRequest){
+    async insertItem(request:JoinRequest){
         await super.insertItem(request);
         await Elasticsearch.insertItem(this.indexName, request.serializeAsJSON());
     }

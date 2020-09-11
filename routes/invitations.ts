@@ -1,6 +1,6 @@
 
 import express, { Router } from 'express';
-import { encryptData, base64ToString, decryptData } from '../util';
+import { encryptData, base64ToString, decryptData, asyncMap } from '../util';
 import EnrollemntFactory from '../factories/projectEnrollmentsFactory';
 import RequestFactory from '../factories/joinRequestFactory';
 import RequestController from '../controllers/joinRequestsController';
@@ -9,6 +9,9 @@ import ProjectUserRelations from '../schemas/relations/ProjectEnrollment';
 import ProjectEnrollmentController from '../controllers/projectEnrollmentController';
 import ProjectJoinRequest from '../schemas/joinRequests/projectJoinRequest';
 import UserJoinRequest from '../schemas/joinRequests/userJoinRequest';
+import NotificationsFactory from '../factories/notificationsFactory';
+import NotificationsController from '../controllers/NotificationsController';
+import Notification from '../schemas/notifications/notification';
 
 const router:Router = express.Router();
 
@@ -16,11 +19,17 @@ const router:Router = express.Router();
 router.post('/join/:projectID', async (req, res)=>{
 let  { projectID } = req.params;
 let { email } = (req as any).user;
+let projectMembersIds = await ProjectEnrollmentController.getInstance().getMemberIDSOfProject(projectID);
 let  data = JSON.parse(decryptData(req.body.data));
 let factory = new RequestFactory();
+let notificationFactory = new NotificationsFactory();
 let request = factory.CreateUserJoinRequest({ userID:email, projectID, message:data.message });
+let notications = notificationFactory.createUserJoinRequestNotification(projectID, projectMembersIds, request.ID);
 try{
-    await RequestController.getInstance().createItem(request);
+    await RequestController.getInstance().insertItem(request);
+    await asyncMap(notications, async (noti:Notification)=>{
+        await NotificationsController.getInstance().insertItem(noti);
+    });
     res.json({data:encryptData("success")});
 }catch(e){
     res.sendStatus(500);
@@ -32,9 +41,12 @@ router.post('/invite/:userID/:projectID', async (req, res)=>{
     let email = base64ToString(userID);
     let data = JSON.parse(decryptData(req.body.data));
     let factory = new RequestFactory();
+    let notificationFactory = new NotificationsFactory();
     let request = factory.CreateProjectJoinRequest({ userID:email, projectID, message:data.message });
+    let notication = notificationFactory.createProjectJoinRequestNotification(projectID, email, request.ID); 
     try{
-        await RequestController.getInstance().createItem(request);
+        await RequestController.getInstance().insertItem(request);
+        await NotificationsController.getInstance().insertItem(notication);
         res.json({data:encryptData("success")});
     }catch(e){
         res.sendStatus(500);
