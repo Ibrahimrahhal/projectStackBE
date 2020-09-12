@@ -25,15 +25,16 @@ let factory = new RequestFactory();
 let notificationFactory = new NotificationsFactory();
 let request = factory.CreateUserJoinRequest({ userID:email, projectID, message:data.message });
 let notications = notificationFactory.createUserJoinRequestNotification(projectID, projectMembersIds, request.ID);
-try{
+// try{
     await RequestController.getInstance().insertItem(request);
     await asyncMap(notications, async (noti:Notification)=>{
         await NotificationsController.getInstance().insertItem(noti);
     });
     res.json({data:encryptData("success")});
-}catch(e){
-    res.sendStatus(500);
-}
+// }catch(e){
+//     console.log
+//     res.sendStatus(500);
+// }
 });
 
 router.post('/invite/:userID/:projectID', async (req, res)=>{

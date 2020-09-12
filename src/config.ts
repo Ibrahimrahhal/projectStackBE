@@ -3,9 +3,8 @@ export default {
         users: "ProjectStackUsers",
         projects: "ProjectStackAllProjects",
         projectUserTable: "ProjectStackUserProjectRel",
-        projectInvitations: "ProjectStackInvitations",
-        projectJoinRequest: "ProjectStackRequests",
-        notificationsTable: "projectStackUsersNotifications"
+        projectJoinRequest: "projectStackJoinRequests",
+        notificationsTable: "projectStackNotifications"
     },
     elasticsearch:{
         endpoint:"https://search-teamslounge-k2eyqwt5ivv2oyonhl42eru7oq.us-east-1.es.amazonaws.com/",
@@ -28,6 +27,6 @@ export default {
         return `https://s3.amazonaws.com/${name}/`
     },
     disableAuth:false,
-    disableEncryption:false
+    disableEncryption:true
     
 };

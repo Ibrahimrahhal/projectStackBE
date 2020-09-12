@@ -1,9 +1,26 @@
 /node_modules
 /.vscode
 /.aws
+#comment this for deplayment
+
 config.js
 claudia.json
 util.js
+/routes
+/bin
+/controllers
+/elasticsearch-mappings
+/factories
+/helpers
+/implementables
+/schemas
+app.js
+config.js
+util.js
+app.map.js
+config.map.js
+util.map.js
+
 # /src
 .DS_Store
 .backend-0.0.0.zip.icloud
