@@ -6,8 +6,8 @@
     "start": "node ./bin/www",
     "dev": "nodemon",
     "debug": "node --inspect ./bin/www",
-    "deploy": "claudia update",
-    "compile": "tsc"
+    "deploy": "npm run compile && claudia update",
+    "compile": "tsc && cp -r ./dist/* ./ && rm -rf ./dist"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.9.0",
