@@ -1,9 +1,10 @@
 {
     "properties":{
-        "Type": { "type" : "integer" },
-        "UserID": { "type" : "keyword" }, 
+        "ID": { "type" : "keyword" },
+        "type": { "type" : "integer" },
+        "userID": { "type" : "keyword" }, 
         "read": { "type" : "boolean" },
-        "RequestID": {"type" : "keyword"},
+        "requestID": {"type" : "keyword"},
         "projectID": {"type" : "keyword"},
         "timestamp": {"type": "long"}
     }

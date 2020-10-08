@@ -1,16 +1,17 @@
 
 import express from 'express';
 import ProjectsContoller from '../controllers/projectController';
-import { encryptData } from '../util';
+import { decryptData, encryptData } from '../util';
 
 const router = express.Router();
 
-router.get('/', async (req, res)=>{
-    let projects = await ProjectsContoller.getInstance().getAllItems();
-    let regularObjects  = projects.map((project)=>{
+router.post('/', async (req, res)=>{
+    let query = JSON.parse(decryptData(req.body.data));
+    let results = await ProjectsContoller.getInstance().Search(query);
+    results.results  = results.results.map((project)=>{
         return project.serializeAsJSON();
-    })
-    res.json({data: encryptData(regularObjects)});
+    });
+    res.json({data: encryptData(results)});
 });
 
 

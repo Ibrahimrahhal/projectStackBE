@@ -44,8 +44,8 @@ public static PatchItem(indexName:string, Item: any, ID:string = Item.ID){
 public static search(indexName:string, SearchObject:any, page:number){
     return this.elasticsearchInstance.search({
         index: indexName,
-        from: page?(page * Config.elasticsearch.searchPageSize):undefined,
-        size: page?Config.elasticsearch.searchPageSize:undefined,
+        from: (typeof page === typeof 1)?(page * Config.elasticsearch.searchPageSize):0,
+        size: (typeof page === typeof 1)?Config.elasticsearch.searchPageSize:999,
         body: this.generateQuery(SearchObject)    
     });
 }
@@ -65,12 +65,40 @@ private static generateUpdateScript(Item:any){
 
 private static generateQuery(SearchObject:any){
     let query = Bodybuilder();
+    (SearchObject['matchers'] || []).forEach((q:any, index:number)=>{
+        // if(index == 0)
+        //     query = query.query(q.type, q.feild, q.value);
+        // else
+            query = query.orQuery(q.type, q.feild, q.value);
 
-    (SearchObject['filter'] || []).forEach((q:any)=>{
-        query = query.filter(q.type, q.feild, q.value);
+    });
+    (SearchObject['filters'] || []).forEach((q:any)=>{
+        if(q.value instanceof Array){
+            q.value.forEach((val:any)=>{
+                query = query.orFilter(q.type, q.feild, val);
+            })
+        }else{
+            query = query.filter(q.type, q.feild, q.value);
+        }
+    });
+    (SearchObject['exists'] || []).forEach((q:any)=>{
+            query = query.query('exists', q);
     });
 
-   return query.build();
+    (SearchObject['sort'] || []).forEach((q:any)=>{
+        query = query.sort(q.feild, q.order || 'desc');
+    });
+    (SearchObject['not'] || []).forEach((q:any)=>{
+        query = query.notFilter('match', q.feild, q.value);
+});
+    let result = query.build();
+    if(Object.keys(result).length == 0)
+        result = Bodybuilder()
+        .query('match_all')
+        .build();
+
+    console.log(JSON.stringify(result))
+   return result;
 }
 
 

@@ -16,6 +16,7 @@ export default abstract class DynamodbController<T>{
     abstract dynamodbTable:string;
     abstract Factory:Factory<T>;
 
+    resevedWords:string[] = ["type", "timestamp"]
 
 
     protected toDynamodbObject(item:T):any{
@@ -39,6 +40,8 @@ export default abstract class DynamodbController<T>{
 
     protected fromDynamodbObject(Item:any):T{    
         let obj:any = {}
+        if(!Item)
+            return Item;
         Object.keys(Item).forEach((key)=>{
             Object.keys(Item[key]).forEach((type)=>{
                 obj[key] = this.toStringAtrr.includes(key)?JSON.parse(Item[key][type]):Item[key][type];
@@ -54,12 +57,14 @@ export default abstract class DynamodbController<T>{
     let isArray:boolean = primaryKey instanceof Array ;
     primaryKey = (isArray && primaryKey.length == 1) ? primaryKey[0] : primaryKey
     if(primaryKey instanceof Array){
+        if(primaryKey.length == 0)
+            return [];
         result = await promiseBasedGetItems({
             RequestItems:{
                 [this.dynamodbTable]: {
                     Keys: primaryKey.map((key)=>{ return {[this.primaryKey]:{'S':key}}}),
                 }}})
-        items = result.Responses.ProjectStackAllProjects.map((item:any)=>{
+        items = result.Responses[this.dynamodbTable].map((item:any)=>{
             return this.fromDynamodbObject(item);
         });
     }else{
@@ -110,25 +115,29 @@ export default abstract class DynamodbController<T>{
 
 
     protected generatePutExprestions(item:T):any{
-        let UpdateExpression = 'set ', ExpressionAttributeValues:any = {};
+        let UpdateExpression = 'set ', ExpressionAttributeValues:any = {}, ExpressionAttributeNames:any = {};
         Object.keys(this.totalAttr).forEach((key)=>{
-            if(key == "email")
+            if(key == this.primaryKey)
                 return;
-            if(typeof (item as any)[key] != typeof undefined){
+            if(typeof (item as any)[key] != typeof undefined && (item as any)[key] !== null){
                 let obj:any={};
-                if(!ExpressionAttributeValues[`:${key[0]}`]){
-                    UpdateExpression+= `${key} = :${key[0]} , `;
-                    obj[this.totalAttr[key]] =  this.toStringAtrr.includes(key)?JSON.stringify((item as any)[key]):(item as any)[key].toString();
-                    ExpressionAttributeValues[`:${key[0]}`] = obj;
-                }else{
-                    UpdateExpression+= `${key} = :${key[1]} , `;
-                    obj[this.totalAttr[key]]=  this.toStringAtrr.includes(key)?JSON.stringify((item as any)[key]):(item as any)[key].toString()
-                    ExpressionAttributeValues[`:${key[1]}`] = obj;
+                let keyChar = [...key].find(c=>!ExpressionAttributeValues[`:${c}`]);
+                obj[this.totalAttr[key]] =  
+                this.toStringAtrr.includes(key) ? 
+                JSON.stringify((item as any)[key]) : 
+                (this.totalAttr[key] == 'BOOL' ? (item as any)[key] : (item as any)[key].toString());
+                ExpressionAttributeValues[`:${keyChar}`] = obj;
+                if(this.resevedWords.includes(key)){
+                    ExpressionAttributeNames[`#${key[0]+key[1]}`] = key;
+                    key = `#${key[0]+key[1]}`;
                 }
+                UpdateExpression+= `${key} = :${keyChar} , `;
             }
         });
-        UpdateExpression = UpdateExpression.substring(0,UpdateExpression.length-3)
+        UpdateExpression = UpdateExpression.substring(0,UpdateExpression.length-3);
+        ExpressionAttributeNames = Object.keys(ExpressionAttributeNames).length == 0 ? undefined : ExpressionAttributeNames;
         return {
+            ExpressionAttributeNames,
             UpdateExpression,
             ExpressionAttributeValues
         }

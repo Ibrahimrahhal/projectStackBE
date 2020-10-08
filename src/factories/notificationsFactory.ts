@@ -10,14 +10,14 @@ export default class NotificationsFactory extends Factory<Notification>{
 
     createItem(itemObject:any):Notification{
 
-        switch (itemObject.type){
-            case notifcationsEnums.JoinRequestAnsweredNotification:
+        switch ((itemObject.type || "").toString()){
+            case notifcationsEnums.JoinRequestAnsweredNotification.toString():
                 return new JoinRequestAnsweredNotification(itemObject.ID, itemObject.userID, itemObject.requestID, itemObject.read, itemObject.timestamp);
 
-            case notifcationsEnums.ProjectJoinRequestNotification:
+            case notifcationsEnums.ProjectJoinRequestNotification.toString():
                 return new ProjectJoinRequestNotification(itemObject.ID, itemObject.projectID, itemObject.userID, itemObject.requestID, itemObject.read, itemObject.timestamp);
 
-            case notifcationsEnums.UserJoinRequestToRelatedProjectNotification:
+            case notifcationsEnums.UserJoinRequestToRelatedProjectNotification.toString():
                 return new UserJoinRequestToRelatedProjectNotification(itemObject.ID, itemObject.projectID, itemObject.userID, itemObject.requestID, itemObject.read, itemObject.timestamp)
         }
 

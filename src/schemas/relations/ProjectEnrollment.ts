@@ -35,4 +35,8 @@ export default class ProjectUserRelations implements Serializable{
         return this.projectId;
     }
     
+
+    getIsAdmin():boolean{
+        return this.isAdmin;
+    }
 }

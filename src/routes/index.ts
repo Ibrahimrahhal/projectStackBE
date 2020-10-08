@@ -14,7 +14,7 @@ router.use('/users', UsersRoute);
 router.use('/project', ProjectRoute);
 router.use('/projects', ProjectsRoute);
 router.use('/storage', StorageRoute);
-router.use('/notification', notificationRouter);
+router.use('/notifications', notificationRouter);
 router.use('/', invitaionRoute);
 
 router.get('/',(req:any,res)=>{

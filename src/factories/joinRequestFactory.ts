@@ -8,10 +8,10 @@ export default class JoinRequestsFactory extends Factory<JoinRequest>{
 
     public createItem(json:any):JoinRequest{
         const { type } = json;
-        switch(type){
-            case JoinRequestTypeEnum.ProjectJoinRequest:
+        switch((type || "").toString()){
+            case JoinRequestTypeEnum.ProjectJoinRequest.toString():
                 return this.CreateProjectJoinRequest(json);
-            case JoinRequestTypeEnum.UserJoinRequest:
+            case JoinRequestTypeEnum.UserJoinRequest.toString():
                 return this.CreateUserJoinRequest(json);
         }
     }

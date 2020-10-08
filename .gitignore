@@ -3,24 +3,23 @@
 /.aws
 #comment this for deplayment
 
-config.js
+/src/config.ts
 claudia.json
-util.js
-/routes
-/bin
-/controllers
-/elasticsearch-mappings
-/factories
-/helpers
-/implementables
-/schemas
-app.js
-config.js
-util.js
-app.map.js
-config.map.js
-util.map.js
-
-# /src
+/src/util.ts
+# /routes
+# /bin
+# /controllers
+# /elasticsearch-mappings
+# /factories
+# /helpers
+# /implementables
+# /schemas
+# app.js
+# config.js
+# util.js
+# app.map.js
+# config.map.js
+# util.map.js
+./dist
 .DS_Store
 .backend-0.0.0.zip.icloud

@@ -12,29 +12,30 @@ import UserJoinRequest from '../schemas/joinRequests/userJoinRequest';
 import NotificationsFactory from '../factories/notificationsFactory';
 import NotificationsController from '../controllers/NotificationsController';
 import Notification from '../schemas/notifications/notification';
+import ProjectController from '../controllers/projectController';
 
 const router:Router = express.Router();
 
 
 router.post('/join/:projectID', async (req, res)=>{
-let  { projectID } = req.params;
-let { email } = (req as any).user;
-let projectMembersIds = await ProjectEnrollmentController.getInstance().getMemberIDSOfProject(projectID);
-let  data = JSON.parse(decryptData(req.body.data));
-let factory = new RequestFactory();
-let notificationFactory = new NotificationsFactory();
-let request = factory.CreateUserJoinRequest({ userID:email, projectID, message:data.message });
-let notications = notificationFactory.createUserJoinRequestNotification(projectID, projectMembersIds, request.ID);
-// try{
-    await RequestController.getInstance().insertItem(request);
-    await asyncMap(notications, async (noti:Notification)=>{
-        await NotificationsController.getInstance().insertItem(noti);
-    });
-    res.json({data:encryptData("success")});
-// }catch(e){
-//     console.log
-//     res.sendStatus(500);
-// }
+    let  { projectID } = req.params;
+    let { email } = (req as any).user;
+    let projectMembersIds = await ProjectEnrollmentController.getInstance().getMemberIDSOfProject(projectID);
+    let  data = JSON.parse(decryptData(req.body.data));
+    let factory = new RequestFactory();
+    let notificationFactory = new NotificationsFactory();
+    let request = factory.CreateUserJoinRequest({ userID:email, projectID, message:data.message });
+    let notications = notificationFactory.createUserJoinRequestNotification(projectID, projectMembersIds, request.ID);
+    try{
+        await RequestController.getInstance().insertItem(request);
+        await asyncMap(notications, async (noti:Notification)=>{
+            await NotificationsController.getInstance().insertItem(noti);
+        });
+        res.json({data:encryptData("success")});
+    }catch(e){
+        console.log
+        res.sendStatus(500);
+    }
 });
 
 router.post('/invite/:userID/:projectID', async (req, res)=>{
@@ -60,7 +61,7 @@ router.post('/invitation/:invitationID/accept', async(req, res)=>{
     let userEmail = (req as any).user.email;
     let invitaion:JoinRequest = await RequestController.getInstance().getItem( invitationID ) as JoinRequest;
     let enrollmentFactory = new EnrollemntFactory();
-    let data = JSON.parse(encryptData(req.body)).data;
+    let data = JSON.parse(decryptData(req.body)).data;
     let enrollemnt:ProjectUserRelations;
     if(invitaion instanceof ProjectJoinRequest){
         (invitaion as ProjectJoinRequest).markAsAccepted(data.message);
@@ -78,11 +79,11 @@ router.post('/invitation/:invitationID/accept', async(req, res)=>{
 });
 
 
-router.post('/invitaion/:invitationID/reject', async (req, res)=>{
+router.post('/invitation/:invitationID/reject', async (req, res)=>{
     try{
         let { invitationID } = req.params;
         let invitaion:JoinRequest = await RequestController.getInstance().getItem( invitationID ) as JoinRequest;
-        let data = JSON.parse(encryptData(req.body)).data;
+        let data = JSON.parse(decryptData(req.body)).data;
         if(invitaion instanceof ProjectJoinRequest)
             (invitaion as ProjectJoinRequest).markAsRejected(data.message);
         else
@@ -98,9 +99,23 @@ router.post('/invitaion/:invitationID/reject', async (req, res)=>{
 router.get('/invitaions', async(req, res)=>{ 
     try{
     let userID = (req as any).user.email;
-    let invitaions = await RequestController.getInstance().getInvitaionsForUser(userID);    
+    let invitaions = await RequestController.getInstance().getInvitaionsForUser(userID);
+    let invitaionsWihExtra:any = await asyncMap(invitaions, async(invit:JoinRequest)=>{
+        let project;
+        try{
+            project = await ProjectController.getInstance().getItemCheap(invit.projectID);
+        }catch{
+            project = null;
+        }
+        return {
+            request:invit.serializeAsJSON(),
+            extras:{
+                project:project && project.serializeAsJSON()
+            }
+        }
+    })    
     res.json({
-        data:encryptData(invitaions.map(i=>i.serializeAsJSON()))
+        data:encryptData(invitaionsWihExtra)
     });
     }catch(e){
         res.sendStatus(500);

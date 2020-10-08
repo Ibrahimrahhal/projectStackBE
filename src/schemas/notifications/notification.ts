@@ -16,7 +16,7 @@ export default abstract class Notification implements Serializable{
         this.read = read;
         this.userID = UserID;
         this.timestamp = timestamp;
-        ID = ID || GenerateRandomID();
+        this.ID = ID || GenerateRandomID();
     }
 
     markAsRead():void{

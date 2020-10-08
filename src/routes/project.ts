@@ -1,4 +1,4 @@
-import express, { Response, Request } from 'express';
+import express, { Response, Request, request } from 'express';
 import { 
     encryptData, 
     decryptData, 
@@ -9,6 +9,10 @@ import ProjectEnrollmentController from '../controllers/projectEnrollmentControl
 import Project from '../schemas/project/project';
 import ProjectsFactory from '../factories/projectsFactory';
 import ProjectEnrollmentFactory from '../factories/projectEnrollmentsFactory';
+import JoinRequestController from '../controllers/joinRequestsController';
+import JoinRequest from '../schemas/joinRequests/joinRequest';
+import UserController from '../controllers/UserController';
+import { ProjectWithExtras } from 'projectWithExtras';
 
 
 const router = express.Router();
@@ -17,11 +21,12 @@ const ProjectsFactoryInstance = new ProjectsFactory();
 
 router.get('/', async (req:Request, res:Response)=>{
     let projects = await ProjectEnrollmentController.getInstance().getProjectsOfUsers((req as any).user.email);
-    await asyncMap(projects, async (project:Project)=>{
+    await asyncMap(projects, async (projectExtra:ProjectWithExtras)=>{
+        let { project } = projectExtra;
         project.setMembers(await ProjectEnrollmentController.getInstance().getMembersOfProject(project.ID));
     });
-    let results = projects.map(p=>p.serializeAsJSON());
-    res.json({data: encryptData(results)});
+    projects.map(p=>p.project = p.project.serializeAsJSON());
+    res.json({data: encryptData(projects)});
 });
 
 
@@ -55,8 +60,23 @@ router.get('/:ID/members', async (req, res)=>{
     let projectID = req.params['ID'];
     let members = await ProjectEnrollmentController.getInstance().getMembersOfProject(projectID);
     res.json({data: encryptData(members.map(member=>member.serializeAsJSON()))});
-})
+});
 
+
+
+router.get('/:ID/join-requests', async (req, res)=>{
+    let projectID = req.params['ID'];
+    let requests = await JoinRequestController.getInstance().getRequestsForProject(projectID);
+    let requestWithExtras = await asyncMap(requests, async (request:JoinRequest)=>{
+        return {
+            request: request.serializeAsJSON(),
+            extras:{
+                user: await UserController.getInstance().getItemCheap(request.userID)
+            }
+        }
+    });
+    res.json({data: encryptData(requestWithExtras)});
+});
 
 
 

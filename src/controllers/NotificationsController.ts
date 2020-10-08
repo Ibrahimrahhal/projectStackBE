@@ -63,7 +63,7 @@ export default class NotificationsController extends DynamodbController<Notifica
 
         let body:elasticsearchResponse<Notification> = response.body;
         return body.hits.hits.map((noti)=>{
-            return this.Factory.createItem(noti);
+            return this.Factory.createItem(noti._source);
         })
     }
 

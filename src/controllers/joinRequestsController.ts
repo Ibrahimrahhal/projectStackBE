@@ -5,7 +5,8 @@ import Config from '../config';
 import Elasticsearch from './elasticsearch/elasticSearchController';
 import Indexable from "./elasticsearch/elasticsearch_indexable";
 import ElasticsearchController from "./elasticsearch/elasticSearchController";
-import elasticsearchResponse from "./elasticsearch/elasticsearch_response_body";
+import elasticsearchResponse, { elasticsearchSingleResponse } from "./elasticsearch/elasticsearch_response_body";
+import joinRequestsTypes from "../schemas/joinRequests/joinRequestsTypes";
 
 export default class JoinRequestController extends DynamodbController<JoinRequest> implements Indexable{
     static instance:JoinRequestController;
@@ -42,6 +43,7 @@ export default class JoinRequestController extends DynamodbController<JoinReques
 
     async insertItem(request:JoinRequest){
         await super.insertItem(request);
+        console.log(JSON.stringify(request.serializeAsJSON()))
         await Elasticsearch.insertItem(this.indexName, request.serializeAsJSON());
     }
 
@@ -57,17 +59,31 @@ export default class JoinRequestController extends DynamodbController<JoinReques
 
     async getInvitaionsForUser(UserID:string):Promise<JoinRequest[]>{
         let result= await ElasticsearchController.search(this.indexName, {
-            filter:[{type:'match', feild:'userID', value:UserID}]
+            filters:[
+            {type:'match', feild:'userID', value:UserID},
+            {type:'match', feild:'type', value:joinRequestsTypes.ProjectJoinRequest},
+            {type:'match', feild:'accepted', value:false},
+            {type:'match', feild:'rejected', value:false}]
         }, undefined);
         let data:elasticsearchResponse<JoinRequest> = result.body;
         return data.hits.hits.map(single=>this.Factory.createItem(single._source));
     }
 
-    async getRequestsForProject(UserID:string):Promise<JoinRequest[]>{
+    async getRequestsForProject(projectID:string):Promise<JoinRequest[]>{
         let result= await ElasticsearchController.search(this.indexName, {
-            filter:[{type:'match', feild:'projectID', value:UserID}]
+            filters:[
+                {type:'match', feild:'projectID', value:projectID},
+                {type:'match', feild:'type', value:joinRequestsTypes.UserJoinRequest},
+                {type:'match', feild:'accepted', value:false},
+                {type:'match', feild:'rejected', value:false}
+            ]
         }, undefined);
         let data:elasticsearchResponse<JoinRequest> = result.body;
         return data.hits.hits.map(single=>this.Factory.createItem(single._source));
+    }
+
+    async getItemCheap(ID:string):Promise<JoinRequest>{
+        let res = (await ElasticsearchController.GetItem(this.indexName, ID)).body as elasticsearchSingleResponse<JoinRequest>;
+        return this.Factory.createItem(res._source);
     }
 }

@@ -10,6 +10,7 @@ import Indexable from "./elasticsearch/elasticsearch_indexable";
 import Elasticsearch from './elasticsearch/elasticSearchController'; 
 import elasticsearchResponse from "./elasticsearch/elasticsearch_response_body";
 import ProjectUserRelations from "../schemas/relations/ProjectEnrollment";
+import { ProjectWithExtras } from "projectWithExtras";
 export default class ProjectEnrollmentController extends ManyToMany<ProjectEnrollmentRelations, Project, User> implements Indexable{
     static instance:ProjectEnrollmentController;
     protected FirstEntityController:ProjectController;
@@ -17,7 +18,7 @@ export default class ProjectEnrollmentController extends ManyToMany<ProjectEnrol
     totalAttr  = {
         ID:"S",
         userID:"S",
-        projectID:"S",
+        projectId:"S",
         timestamp:"N",
         isAdmin:"BOOL"
      };
@@ -43,12 +44,15 @@ export default class ProjectEnrollmentController extends ManyToMany<ProjectEnrol
         return ProjectEnrollmentController.getInstance();
     }
 
-    public async getProjectsOfUsers(userID:string):Promise<Project[]>{
+    public async getProjectsOfUsers(userID:string):Promise<ProjectWithExtras[]>{
         let projectEnrollmentsSearch = await Elasticsearch.search(this.indexName, {
-            filter:[{
+            filters:[{
                 type:'match',
                 feild:'userID',
                 value: userID
+            }],
+            sort:[{
+                feild:'timestamp'
             }]
         }, undefined);
 
@@ -56,13 +60,24 @@ export default class ProjectEnrollmentController extends ManyToMany<ProjectEnrol
             return [];
         
         let response:elasticsearchResponse<ProjectEnrollmentRelations> = projectEnrollmentsSearch.body;
-        let projectIDs = response.hits.hits.map(x=>{
+        let [projectIDs, isAdminArray] = response.hits.hits.map(x=>{
             return this.Factory.createItem(x._source);
         }).map(projectEnroll=>{
-            return projectEnroll.getProjectID()
-        });
+            return [projectEnroll.getProjectID(), projectEnroll.getIsAdmin()];
+        }).reduce((rev:any, current:any)=>{
+            rev[0].push(current[0]);
+            rev[1].push(current[1]);
+            return rev;
+        }, [[],[]]) ;
 
-        return  (await this.FirstEntityController.getItem(projectIDs)) as  Project[];
+        return  ((await this.FirstEntityController.getItem(projectIDs)) as  Project[]).map((project, index)=>{
+            return {
+                project,
+                extras:{
+                    isAdmin:isAdminArray[index]
+                }            
+            }
+        });
     }
 
     public async getMembersOfProject(projectId:string):Promise<User[]>{
@@ -78,7 +93,7 @@ export default class ProjectEnrollmentController extends ManyToMany<ProjectEnrol
 
     public async getMemberIDSOfProject(projectId:string):Promise<string[]>{
         let projectEnrollmentsSearch = await Elasticsearch.search(this.indexName, {
-            filter:[{
+            filters:[{
                 type:'match',
                 feild:'projectId',
                 value: projectId

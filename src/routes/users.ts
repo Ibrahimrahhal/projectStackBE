@@ -1,18 +1,18 @@
 
 import express from 'express';
 import UserController from '../controllers/UserController';
-import { encryptData } from '../util';
+
+import { decryptData, encryptData } from '../util';
 
 const router = express.Router();
 
-router.get('/', async (req,res)=>{
-    let users = await UserController.getInstance().getAllItems();
-    let regularObjects  = users.filter((user)=>{
-        return user.isVerfied();
-    }).map((user)=>{
+router.post('/', async (req,res)=>{
+    let query = JSON.parse(decryptData(req.body.data));
+    let results = await UserController.getInstance().Search(query, (req as any).user.email);
+    results.results  = results.results.map((user)=>{
         return user.serializeAsJSON();
     });
-    res.json({data: encryptData(regularObjects)});
+    res.json({data: encryptData(results)});
 });
 
 

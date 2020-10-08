@@ -4,6 +4,8 @@ import UserController from '../controllers/UserController';
 import { encryptData, decryptData, base64ToString } from '../util';
 import { validateUpdateReqBelongToSameUser } from '../protectedRouteMiddleware';
 import User from '../schemas/user/user';
+import ProjectController from '../controllers/projectController';
+import ProjectEnrollmentController from '../controllers/projectEnrollmentController';
 
 const router:Router = express.Router();
 
@@ -30,9 +32,19 @@ router.get('/', async (req,res)=>{
 
 router.get('/:ID', async (req,res)=>{
     let email = base64ToString(req.params['ID']);
+    let withProject = req.query['projects'];
     try{
         let user = await UserController.getInstance().getItem(email) as User;
-        res.json({ data: encryptData(user.serializeAsJSON()) });
+        let projects;
+        if(withProject){
+        projects = await ProjectEnrollmentController.getInstance().getProjectsOfUsers(user.email);
+        projects = projects.map((projWithExtras)=>{
+            projWithExtras.project = projWithExtras.project.serializeAsJSON();
+            return projWithExtras;
+        });
+    }
+        user = user.serializeAsJSON();
+        res.json({ data: encryptData({ user, projects }) });
     }catch(e){
         res.sendStatus(500);
     }
