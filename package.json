@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "npm run compile && node ./dist/bin/www",
     "dev": "nodemon",
     "debug": "node --inspect ./bin/www",
     "deploy": "npm run compile && cp ./claudia.json ./dist/claudia.json && cp ./package.json ./dist/package.json && claudia update --source ./dist",
