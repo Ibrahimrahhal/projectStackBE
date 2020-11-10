@@ -61,7 +61,7 @@ router.post('/invitation/:invitationID/accept', async(req, res)=>{
     let userEmail = (req as any).user.email;
     let invitaion:JoinRequest = await RequestController.getInstance().getItem( invitationID ) as JoinRequest;
     let enrollmentFactory = new EnrollemntFactory();
-    let data = JSON.parse(decryptData(req.body)).data;
+    let data = JSON.parse(decryptData(req.body.data));
     let enrollemnt:ProjectUserRelations;
     if(invitaion instanceof ProjectJoinRequest){
         (invitaion as ProjectJoinRequest).markAsAccepted(data.message);
@@ -74,7 +74,7 @@ router.post('/invitation/:invitationID/accept', async(req, res)=>{
     await ProjectEnrollmentController.getInstance().addMemberToProject(enrollemnt);
     res.json({data:encryptData("success")});
     }catch(e){
-    res.sendStatus(500);
+    res.sendStatus(500)
     }
 });
 
@@ -104,7 +104,7 @@ router.get('/invitaions', async(req, res)=>{
         let project;
         try{
             project = await ProjectController.getInstance().getItemCheap(invit.projectID);
-        }catch{
+        }catch(e){
             project = null;
         }
         return {

@@ -1,11 +1,11 @@
 /node_modules
 /.vscode
-/.aws
+# /.aws
 #comment this for deplayment
 
-/src/config.ts
-claudia.json
-/src/util.ts
+# /src/config.ts
+# claudia.json
+# /src/util.ts
 # /routes
 # /bin
 # /controllers

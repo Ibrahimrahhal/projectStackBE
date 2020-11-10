@@ -66,7 +66,7 @@ router.post('/invitation/:invitationID/accept', (req, res) => __awaiter(this, vo
         let userEmail = req.user.email;
         let invitaion = yield joinRequestsController_1.default.getInstance().getItem(invitationID);
         let enrollmentFactory = new projectEnrollmentsFactory_1.default();
-        let data = JSON.parse(util_1.decryptData(req.body)).data;
+        let data = JSON.parse(util_1.decryptData(req.body.data));
         let enrollemnt;
         if (invitaion instanceof projectJoinRequest_1.default) {
             invitaion.markAsAccepted(data.message);
@@ -109,7 +109,7 @@ router.get('/invitaions', (req, res) => __awaiter(this, void 0, void 0, function
             try {
                 project = yield projectController_1.default.getInstance().getItemCheap(invit.projectID);
             }
-            catch (_a) {
+            catch (e) {
                 project = null;
             }
             return {

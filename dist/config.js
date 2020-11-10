@@ -29,6 +29,6 @@ exports.default = {
         return `https://s3.amazonaws.com/${name}/`;
     },
     disableAuth: false,
-    disableEncryption: true
+    disableEncryption: false
 };
 //# sourceMappingURL=config.js.map
