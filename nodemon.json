@@ -4,3 +4,4 @@
     "exec": " node --inspect -r ts-node/register ./src/bin/www.ts",
     "ext": "ts"
 }
+b 
